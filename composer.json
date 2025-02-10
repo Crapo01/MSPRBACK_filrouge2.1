@@ -1,0 +1,21 @@
+{
+    "name": "lucpa/app1",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Crapo01",
+            "email": "capusluc@gmail.com"
+        }
+    ],
+    "autoload": {
+    "psr-4": {
+      "Lucpa\\Model\\": "src/Model/",
+      "Lucpa\\Service\\": "src/Service/",
+      "Lucpa\\Repository\\": "src/Repository/"
+    }
+  },
+    "require": {
+        "mongodb/mongodb": "^1.20",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
