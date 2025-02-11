@@ -7,35 +7,46 @@ use Lucpa\Repository\VehicleRepository;
 class VehicleService {
     private $vehicleRepository;
 
-    // Constructor that receives the repository
     public function __construct(VehicleRepository $vehicleRepository) {
         $this->vehicleRepository = $vehicleRepository;
     }
 
-    // Method to save a vehicle
     public function saveVehicle($model, $licencePlate, $informations, $km) {
         try {
-            // Validation
             if (empty($model) || empty($licencePlate)) {
                 return new Response(400, "Le modèle ou l'immatriculation ne peut pas être vide.");
             }
 
-            $vehicle = new Vehicle(null, $model, $licencePlate, $informations, $km);  
+            if (!is_string($model) || strlen($model) > 255) {
+                return new Response(400, "Le modèle doit être une chaîne de caractères valide (maximum 255 caractères).");
+            }
 
-            // Save in the database
+            if (!preg_match('/^[A-Z0-9\-]+$/i', $licencePlate)) {
+                return new Response(400, "L'immatriculation doit être alphanumérique.");
+            }
+
+            if (!is_numeric($km) || $km < 0) {
+                return new Response(400, "Le kilométrage doit être un nombre positif.");
+            }
+
+            $vehicle = new Vehicle(null, $model, $licencePlate, $informations, $km);
+
             $this->vehicleRepository->save($vehicle);
-            
+
             return new Response(201, "Véhicule enregistré avec succès.");
         } catch (\Exception $e) {
             return new Response(500, "Une erreur est survenue lors de l'enregistrement du véhicule: " . $e->getMessage());
         }
     }
 
-    // Method to retrieve a vehicle by its licence_plate
     public function getVehicleByLicencePlate($licencePlate) {
         try {
             if (empty($licencePlate)) {
                 return new Response(400, "L'immatriculation ne peut pas être vide.");
+            }
+
+            if (!preg_match('/^[A-Z0-9\-]+$/i', $licencePlate)) {
+                return new Response(400, "L'immatriculation doit être alphanumérique.");
             }
 
             $vehicle = $this->vehicleRepository->getByLicencePlate($licencePlate);
@@ -50,11 +61,22 @@ class VehicleService {
         }
     }
 
-    // Method to update a vehicle's full details
     public function updateVehicle($id, $model, $licencePlate, $informations, $km) {
         try {
             if (empty($model) || empty($licencePlate)) {
                 return new Response(400, "Le modèle ou l'immatriculation ne peut pas être vide.");
+            }
+
+            if (!is_string($model) || strlen($model) > 255) {
+                return new Response(400, "Le modèle doit être une chaîne de caractères valide (maximum 255 caractères).");
+            }
+
+            if (!preg_match('/^[A-Z0-9\-]+$/i', $licencePlate)) {
+                return new Response(400, "L'immatriculation doit être alphanumérique.");
+            }
+
+            if (!is_numeric($km) || $km < 0) {
+                return new Response(400, "Le kilométrage doit être un nombre positif.");
             }
 
             $result = $this->vehicleRepository->updateVehicle($id, $model, $licencePlate, $informations, $km);
@@ -69,11 +91,14 @@ class VehicleService {
         }
     }
 
-    // Method to count vehicles with more than a specified km
     public function countVehiclesWithMoreThanKm($km) {
         try {
             if (empty($km)) {
                 return new Response(400, "Le kilométrage ne peut pas être vide.");
+            }
+
+            if (!is_numeric($km) || $km < 0) {
+                return new Response(400, "Le kilométrage doit être un nombre positif.");
             }
 
             $count = $this->vehicleRepository->countVehiclesWithMoreThanKm($km);
@@ -83,7 +108,6 @@ class VehicleService {
         }
     }
 
-    // Method to delete a vehicle
     public function deleteVehicle($id) {
         try {
             if (empty($id)) {
@@ -102,4 +126,5 @@ class VehicleService {
         }
     }
 }
+
 

@@ -8,7 +8,7 @@ class Customer {
     private $address;
     private $permitNumber;
 
-    // Constructeur pour initialiser un client
+    
     public function __construct($id = null, $firstName = null, $secondName = null, $address = null, $permitNumber = null) {
         $this->id = $id;
         $this->firstName = $firstName;
@@ -17,7 +17,7 @@ class Customer {
         $this->permitNumber = $permitNumber;
     }
 
-    // Getters and Setters for each property
+   
 
     public function getId() {
         return $this->id;
