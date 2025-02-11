@@ -56,5 +56,17 @@ class BillingService {
             return new Response(500, "Une erreur est survenue lors de la suppression de la facture: " . $e->getMessage());
         }
     }
+
+    // Method to create the table if it doesn't exist
+    public function createTable() {
+        try {
+            // Call the method from the repository to create the table
+            return $this->billingRepository->createTableIfNotExists();
+        } catch (\Exception $e) {
+            // If there's an error, return a response with status 500
+            return new Response(500, "Erreur lors de la création de la table : " . $e->getMessage());
+        }
+    }
+
 }
 

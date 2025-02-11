@@ -2,6 +2,7 @@
 namespace Lucpa\Repository;
 
 use Lucpa\Model\Contract;
+use Lucpa\Service\Response;
 use PDO;
 
 class ContractRepository {
@@ -88,4 +89,31 @@ class ContractRepository {
         $stmt->bindParam(':id', $id);
         $stmt->execute();
     }
+
+    // Method to create the contracts table if it doesn't exist
+    public function createTable() {
+        try {
+            // SQL to create the contracts table
+            $sql = "
+                CREATE TABLE IF NOT EXISTS contracts (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    vehicle_uid CHAR(255) NOT NULL,
+                    customer_uid CHAR(255) NOT NULL,
+                    sign_datetime DATETIME NOT NULL,
+                    loc_begin_datetime DATETIME NOT NULL,
+                    loc_end_datetime DATETIME NOT NULL,
+                    returning_datetime DATETIME ,
+                    price DECIMAL(10, 2) NOT NULL
+                ) ENGINE=InnoDB;
+            ";
+
+            // Execute the query to create the table
+            $this->pdo->exec($sql);
+
+            return new Response(200, "Table 'contracts' vérifiée et créée si nécessaire.");
+        } catch (\Exception $e) {
+            return new Response(500, "Erreur lors de la création de la table des contrats: " . $e->getMessage());
+        }
+    }
+
 }
