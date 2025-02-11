@@ -16,19 +16,14 @@ class Response
         $this->data = $data;
     }
     
-    public function toArray()
-    {
-        return [
-            'status_code' => $this->statusCode,
+    public function toJson() {
+        return json_encode([
+            'status' => $this->statusCode,
             'message' => $this->message,
             'data' => $this->data
-        ];
+        ]);
     }
     
-    public function toJson()
-    {
-        return json_encode($this->toArray());
-    }
     public function getStatusCode()
     {
         return $this->statusCode;

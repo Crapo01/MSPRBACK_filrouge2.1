@@ -1,10 +1,9 @@
 <?php
 
-use Lucpa\Repository\AnalyseRepository;
-use Lucpa\Service\AnalyseService;
 require_once 'vendor/autoload.php';
 Dotenv\Dotenv::createImmutable(__DIR__)->load();
-
+use Lucpa\Repository\AnalyseRepository;
+use Lucpa\Service\AnalyseService;
 use Lucpa\Repository\BillingRepository;
 use Lucpa\Repository\ContractRepository;
 use Lucpa\Repository\CustomerRepository;
@@ -15,10 +14,9 @@ use Lucpa\Service\CustomerService;
 use Lucpa\Model\Database as ModelDatabase;
 use Lucpa\Service\VehicleService;
 
-$db= new ModelDatabase();
-$pdo= $db->getMySQLConnection();
-
-$mongoClient= $db->getMongoConnection();
+$db = new ModelDatabase();
+$pdo = $db->getMySQLConnection();
+$mongoClient = $db->getMongoConnection();
 
 // Initialisation du repository et du service
 $customerRepository = new CustomerRepository($mongoClient);
@@ -33,116 +31,126 @@ $contractService = new ContractService($contractRepository);
 $vehicleRepository = new VehicleRepository($mongoClient);
 $vehicleService = new VehicleService($vehicleRepository);
 
-// Ajouter un client
-//$result= $customerService->saveCustomer('test');  
-
-// find customer by name
-//$customerName = 'John Doe'; 
-//$result = $customerService->getCustomerByName($customerName);
-// delete customer by id
-//$id = 1;
-//$result= $customerService->deleteCustomer($id);  
-
-//$result = $customerService->updateCustomerName(2, "John Smith");
-
-//$response = $billingService->saveBilling(200.50, '2025-02-10');  
-
-//$response = $contractService->saveContract(1000.50);
-
-//$response = $vehicleService->saveVehicle("Toyota Corolla");
-//$response = $contractService->createTable();
-//echo $response->getMessage();
-//$response = $billingService->createTable();
-
-// Output the message from the response
-//echo $response->getMessage();
-
-
-
-
-// Create an instance of the repository
 $analyseRepository = new AnalyseRepository($pdo);
-
-// Create an instance of the AnalyseService
 $analyseService = new AnalyseService($analyseRepository);
 
-// Example: List all ongoing rentals for a specific customer
-$customerUid = "C003"; // Use an actual customer UID
+// Example usage of saveCustomer
+$response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P12345678');
+
+
+// Example usage of getCustomerByFullName
+$response = $customerService->getCustomerByFullName('John', 'Doe');
+
+
+// Example usage of updateCustomer
+$response = $customerService->updateCustomer(1, 'John', 'Smith', '5678 Oak Avenue', 'P87654321');
+
+
+// Example usage of saveVehicle
+$response = $vehicleService->saveVehicle('Toyota Corolla', 'ABC1234', 'Sedan, 5 doors', 15000);
+
+
+// Example usage of getVehicleByLicencePlate
+$response = $vehicleService->getVehicleByLicencePlate('ABC1234');
+
+
+// Example usage of updateVehicle
+$response = $vehicleService->updateVehicle(1, 'Honda Civic', 'XYZ9876', 'Coupe, 2 doors', 25000);
+
+
+// Example usage of countVehiclesWithMoreThanKm
+$response = $vehicleService->countVehiclesWithMoreThanKm(20000);
+
+
+// Example usage of deleteVehicle
+$response = $vehicleService->deleteVehicle(1);
+
+
+// Example usage of saveContract
+$response = $contractService->saveContract(
+    'V001',           // vehicleUid
+    'C003',           // customerUid
+    '2025-02-11 10:00:00', // signDatetime
+    '2025-02-11 14:00:00', // locBeginDatetime
+    '2025-02-12 14:00:00', // locEndDatetime
+    '2025-02-12 15:00:00', // returningDatetime
+    100.00            // price
+);
+
+
+// Example usage of getContractById
+$response = $contractService->getContractById(1); // Use an actual contract ID
+
+
+// Example usage of deleteContract
+$response = $contractService->deleteContract(1); // Use an actual contract ID
+
+
+// Example usage of createTable (if you need to create the contracts table)
+$response = $contractService->createTable();
+
+
+// Example usage of saveBilling
+$response = $billingService->saveBilling(
+    1,       // contract_id (use an actual contract ID)
+    200.50   // amount (use an actual amount greater than 0)
+);
+
+
+// Example usage of getBillingById
+$response = $billingService->getBillingById(1); // Use an actual billing ID
+
+
+// Example usage of deleteBilling
+$response = $billingService->deleteBilling(1); // Use an actual billing ID
+
+
+// Example usage of createTable (if you need to create the billing table)
+$response = $billingService->createTable();
+
+
+// Example usage: List ongoing rentals by customer UID
+$customerUid = 'customer123';
 $response = $analyseService->listOngoingRentalsByCustomerUid($customerUid);
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
-// Example: List all late rentals (rentals where returning datetime is more than 1 hour after loc_end_datetime)
+
+// Example usage: List late rentals
 $response = $analyseService->listLateRentals();
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: List all payments for a specific contract ID
-$contractId = 8; // Use an actual contract ID
+// Example usage: List payments by contract ID
+$contractId = 1;
 $response = $analyseService->listPaymentsByContractId($contractId);
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: Check if a rental has been fully paid
+// Example usage: Check if rental is fully paid
+$contractId = 2;
 $response = $analyseService->isRentalFullyPaid($contractId);
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: List all unpaid rentals
+// Example usage: List unpaid rentals
 $response = $analyseService->listUnpaidRentals();
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: Count late rentals between two dates
-$startDate = '2025-01-01'; // Example start date
-$endDate = '2025-03-31'; // Example end date
+// Example usage: Count late rentals between dates
+$startDate = '2025-01-01';
+$endDate = '2025-01-31';
 $response = $analyseService->countLateRentalsBetweenDates($startDate, $endDate);
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: Count the average number of late rentals per customer
+// Example usage: Count average late rentals per customer
 $response = $analyseService->countAverageLateRentalsPerCustomer();
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: List contracts associated with a vehicle UID
-$vehicleUid = 'V001'; // Example vehicle UID
+// Example usage: List contracts by vehicle UID
+$vehicleUid = 'vehicle123';
 $response = $analyseService->listContractsByVehicleUid($vehicleUid);
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: Get the average delay by vehicle
+// Example usage: Get average delay by vehicle
 $response = $analyseService->getAverageDelayByVehicle();
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: Retrieve all contracts grouped by vehicle
+// Example usage: Get contracts grouped by vehicle
 $response = $analyseService->getContractsGroupedByVehicle();
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
 
-// Example: Retrieve all contracts grouped by customer
+// Example usage: Get contracts grouped by customer
 $response = $analyseService->getContractsGroupedByCustomer();
-echo "<pre>";
-var_dump($response);
-echo "<pre>";
+
+// display Json response
+echo ($response->toJson());
 
 
-
-
-
-//echo "<pre>";
-//var_dump($result->toArray()['message']);
-//var_dump($response);
-//echo "<pre>";
 
 
