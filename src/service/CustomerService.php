@@ -3,46 +3,39 @@ namespace Lucpa\Service;
 
 use Lucpa\Model\Customer;
 use Lucpa\Repository\CustomerRepository;
-use InvalidArgumentException;
+
 
 class CustomerService {
     private $customerRepository;
 
-    // Constructeur qui reçoit le repository
     public function __construct(CustomerRepository $customerRepository) {
         $this->customerRepository = $customerRepository;
     }
 
-    // Méthode pour enregistrer un client
-    public function saveCustomer($name) {
+    // Save customer with integer ID
+    public function saveCustomer($firstName, $secondName, $address, $permitNumber) {
         try {
-            // Validation (only in service layer, not in repository)
-            if (empty($name)) {
-                return new Response(400, "Le nom du client ne peut pas être vide.");
+            if (empty($firstName) || empty($secondName) || empty($address) || empty($permitNumber)) {
+                return new Response(400, "Tous les champs sont requis.");
             }
 
-            $customer = new Customer(null, $name);  // Créer un nouveau client
-
-            // Sauvegarder dans la base de données
+            $customer = new Customer(null, $firstName, $secondName, $address, $permitNumber);
             $this->customerRepository->save($customer);
-            
-            // Return success response
+
             return new Response(201, "Client enregistré avec succès.");
         } catch (\Exception $e) {
-            // Catch any exception generically
-            return new Response(500, "Une erreur est survenue lors de l'enregistrement du client: " . $e->getMessage());
+            return new Response(500, "Erreur lors de l'enregistrement: " . $e->getMessage());
         }
     }
 
-    // Méthode pour récupérer un client par son nom
-    public function getCustomerByName($name) {
+    // Get customer by first and second name
+    public function getCustomerByFullName($firstName, $secondName) {
         try {
-            // Validation (only in service layer, not in repository)
-            if (empty($name)) {
-                return new Response(400, "Le nom ne peut pas être vide.");
+            if (empty($firstName) || empty($secondName)) {
+                return new Response(400, "Les noms ne peuvent pas être vides.");
             }
 
-            $customer = $this->customerRepository->getByName($name);
+            $customer = $this->customerRepository->getByFullName($firstName, $secondName);
 
             if ($customer) {
                 return new Response(200, "Client trouvé.", $customer);
@@ -50,38 +43,36 @@ class CustomerService {
                 return new Response(404, "Client non trouvé.");
             }
         } catch (\Exception $e) {
-            // Catch any exception generically
-            return new Response(500, "Une erreur est survenue lors de la récupération du client: " . $e->getMessage());
+            return new Response(500, "Erreur lors de la récupération: " . $e->getMessage());
         }
     }
 
-    public function updateCustomerName($id, $newName) {
+    // Update customer details
+    public function updateCustomer($id, $firstName, $secondName, $address, $permitNumber) {
         try {
-            if (empty($newName)) {
-                return new Response(400, "Le nom ne peut pas être vide.");
+            if (empty($firstName) || empty($secondName) || empty($address) || empty($permitNumber)) {
+                return new Response(400, "Tous les champs sont requis.");
             }
 
-            $result = $this->customerRepository->updateName($id, $newName);
+            $result = $this->customerRepository->update($id, $firstName, $secondName, $address, $permitNumber);
 
             if ($result) {
-                return new Response(200, "Nom du client mis à jour avec succès.");
+                return new Response(200, "Client mis à jour avec succès.");
             } else {
-                return new Response(404, "Client non trouvé pour mise à jour.");
+                return new Response(404, "Client non trouvé.");
             }
         } catch (\Exception $e) {
-            return new Response(500, "Une erreur est survenue lors de la mise à jour du nom du client: " . $e->getMessage());
+            return new Response(500, "Erreur lors de la mise à jour: " . $e->getMessage());
         }
     }
 
-    // Méthode pour supprimer un client
+    // Delete customer
     public function deleteCustomer($id) {
         try {
-            // Validation de l'ID du client
             if (empty($id)) {
                 return new Response(400, "L'ID du client ne peut pas être vide.");
             }
 
-            // Appel au repository pour supprimer le client
             $result = $this->customerRepository->delete($id);
 
             if ($result) {
@@ -90,10 +81,10 @@ class CustomerService {
                 return new Response(404, "Client non trouvé.");
             }
         } catch (\Exception $e) {
-            // Catch any exception generically
-            return new Response(500, "Une erreur est survenue lors de la suppression du client: " . $e->getMessage());
+            return new Response(500, "Erreur lors de la suppression: " . $e->getMessage());
         }
     }
 }
+
 
 

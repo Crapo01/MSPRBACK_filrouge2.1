@@ -1,16 +1,24 @@
 <?php
 namespace Lucpa\Model;
+
 class Customer {
     private $id;
-    private $name;
+    private $firstName;
+    private $secondName;
+    private $address;
+    private $permitNumber;
 
     // Constructeur pour initialiser un client
-    public function __construct($id = null, $name = null) {
+    public function __construct($id = null, $firstName = null, $secondName = null, $address = null, $permitNumber = null) {
         $this->id = $id;
-        $this->name = $name;
+        $this->firstName = $firstName;
+        $this->secondName = $secondName;
+        $this->address = $address;
+        $this->permitNumber = $permitNumber;
     }
 
-    // Getter et Setter pour l'id
+    // Getters and Setters for each property
+
     public function getId() {
         return $this->id;
     }
@@ -19,12 +27,35 @@ class Customer {
         $this->id = $id;
     }
 
-    // Getter et Setter pour le nom
-    public function getName() {
-        return $this->name;
+    public function getFirstName() {
+        return $this->firstName;
     }
 
-    public function setName($name) {
-        $this->name = $name;
+    public function setFirstName($firstName) {
+        $this->firstName = $firstName;
+    }
+
+    public function getSecondName() {
+        return $this->secondName;
+    }
+
+    public function setSecondName($secondName) {
+        $this->secondName = $secondName;
+    }
+
+    public function getAddress() {
+        return $this->address;
+    }
+
+    public function setAddress($address) {
+        $this->address = $address;
+    }
+
+    public function getPermitNumber() {
+        return $this->permitNumber;
+    }
+
+    public function setPermitNumber($permitNumber) {
+        $this->permitNumber = $permitNumber;
     }
 }

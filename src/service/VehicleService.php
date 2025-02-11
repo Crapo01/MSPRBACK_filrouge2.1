@@ -3,7 +3,7 @@ namespace Lucpa\Service;
 
 use Lucpa\Model\Vehicle;
 use Lucpa\Repository\VehicleRepository;
-use InvalidArgumentException;
+
 
 class VehicleService {
     private $vehicleRepository;
