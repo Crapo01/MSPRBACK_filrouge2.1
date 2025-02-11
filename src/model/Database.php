@@ -30,7 +30,7 @@ class Database
 
                 $this->mysqlPdo = new \PDO($dsn, $username, $password);
                 $this->mysqlPdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-                echo "Connexion réussie à MySQL !<br>";
+                
             } catch (\PDOException $e) {
                 echo "Erreur de connexion MySQL : " . $e->getMessage() . "<br>";
             }
@@ -55,8 +55,7 @@ class Database
 
             try {
 
-                $this->mongoClient = new \MongoDB\Client($uri);
-                echo "Connexion réussie à MongoDB !<br>";
+                $this->mongoClient = new \MongoDB\Client($uri);                
             } catch (\Exception $e) {
                 echo "Erreur de connexion MongoDB : " . $e->getMessage() . "<br>";
             }
