@@ -3,14 +3,14 @@ namespace Lucpa\Model;
 
 class Billing {
     private $id;             // Billing ID (Auto-Incremented)
+    private $contract_id;    // Contract ID (Linked to a contract)
     private $amount;         // Billing amount
-    private $billing_date;   // Billing date
 
     // Constructor to initialize the billing object
-    public function __construct($id = null, $amount, $billing_date) {
+    public function __construct($id = null, $contract_id, $amount) {
         $this->id = $id;
+        $this->contract_id = $contract_id;
         $this->amount = $amount;
-        $this->billing_date = $billing_date;
     }
 
     // Getter for the ID
@@ -23,6 +23,16 @@ class Billing {
         $this->id = $id;
     }
 
+    // Getter for the contract_id
+    public function getContractId() {
+        return $this->contract_id;
+    }
+
+    // Setter for the contract_id
+    public function setContractId($contract_id) {
+        $this->contract_id = $contract_id;
+    }
+
     // Getter for the amount
     public function getAmount() {
         return $this->amount;
@@ -31,15 +41,5 @@ class Billing {
     // Setter for the amount
     public function setAmount($amount) {
         $this->amount = $amount;
-    }
-
-    // Getter for the billing date
-    public function getBillingDate() {
-        return $this->billing_date;
-    }
-
-    // Setter for the billing date
-    public function setBillingDate($billing_date) {
-        $this->billing_date = $billing_date;
     }
 }

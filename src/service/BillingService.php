@@ -13,20 +13,15 @@ class BillingService {
     }
 
     // Method to save a new billing or update an existing one
-    public function saveBilling($amount, $billing_date, $id = null) {
+    public function saveBilling($contract_id, $amount, $id = null) {
         try {
             // Validate amount
             if ($amount <= 0) {
                 return new Response(400, "Le montant de la facturation doit être supérieur à zéro.");
             }
 
-            // Validate billing_date
-            if (empty($billing_date)) {
-                return new Response(400, "La date de facturation ne peut pas être vide.");
-            }
-
-            // Create a new Billing object
-            $billing = new Billing($id, $amount, $billing_date);
+            // Create a new Billing object with contract_id
+            $billing = new Billing($id, $contract_id, $amount);
 
             // Save or update the billing record in the repository
             $this->billingRepository->save($billing);
@@ -61,14 +56,5 @@ class BillingService {
             return new Response(500, "Une erreur est survenue lors de la suppression de la facture: " . $e->getMessage());
         }
     }
-
-    // Method to get all billing records
-    public function getAllBillings() {
-        try {
-            $billings = $this->billingRepository->getAll();
-            return new Response(200, "Liste des factures récupérée.", $billings);
-        } catch (\Exception $e) {
-            return new Response(500, "Une erreur est survenue lors de la récupération des factures: " . $e->getMessage());
-        }
-    }
 }
+

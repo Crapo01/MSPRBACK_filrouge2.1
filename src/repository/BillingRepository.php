@@ -14,22 +14,22 @@ class BillingRepository {
 
     // Method to save or update the billing record
     public function save(Billing $billing) {
+        $contract_id = $billing->getContractId();
         $amount = $billing->getAmount();
-        $billing_date = $billing->getBillingDate();
-        $id= $billing->getId();
-        
-        if ($billing->getId()) {
+        $id = $billing->getId();
+
+        if ($id) {
             // Update existing billing record
-            $stmt = $this->pdo->prepare("UPDATE billings SET amount = :amount, billing_date = :billing_date WHERE id = :id");
-            $stmt->bindParam(':amount', $amount);  // pass variables here
-            $stmt->bindParam(':billing_date', $billing_date);
+            $stmt = $this->pdo->prepare("UPDATE billings SET contract_id = :contract_id, amount = :amount WHERE id = :id");
+            $stmt->bindParam(':contract_id', $contract_id);
+            $stmt->bindParam(':amount', $amount);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
         } else {
             // Insert new billing record
-            $stmt = $this->pdo->prepare("INSERT INTO billings (amount, billing_date) VALUES (:amount, :billing_date)");
-            $stmt->bindParam(':amount', $amount);  // pass variables here
-            $stmt->bindParam(':billing_date', $billing_date);
+            $stmt = $this->pdo->prepare("INSERT INTO billings (contract_id, amount) VALUES (:contract_id, :amount)");
+            $stmt->bindParam(':contract_id', $contract_id);
+            $stmt->bindParam(':amount', $amount);
             $stmt->execute();
 
             // Set the ID of the newly inserted billing record
@@ -42,11 +42,11 @@ class BillingRepository {
         $stmt = $this->pdo->prepare("SELECT * FROM billings WHERE id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
-        
+
         $billing = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($billing) {
-            return new Billing($billing['id'], $billing['amount'], $billing['billing_date']);
+            return new Billing($billing['id'], $billing['contract_id'], $billing['amount']);
         }
 
         return null;  // Return null if not found
@@ -57,18 +57,5 @@ class BillingRepository {
         $stmt = $this->pdo->prepare("DELETE FROM billings WHERE id = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
-    }
-
-    // Method to get all billing records
-    public function getAll() {
-        $stmt = $this->pdo->query("SELECT * FROM billings");
-        $billings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        $result = [];
-        foreach ($billings as $billing) {
-            $result[] = new Billing($billing['id'], $billing['amount'], $billing['billing_date']);
-        }
-
-        return $result;
     }
 }
