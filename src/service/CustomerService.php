@@ -4,7 +4,6 @@ namespace Lucpa\Service;
 use Lucpa\Model\Customer;
 use Lucpa\Repository\CustomerRepository;
 
-
 class CustomerService {
     private $customerRepository;
 
@@ -12,12 +11,16 @@ class CustomerService {
         $this->customerRepository = $customerRepository;
     }
 
-    // Save customer with integer ID
     public function saveCustomer($firstName, $secondName, $address, $permitNumber) {
         try {
             if (empty($firstName) || empty($secondName) || empty($address) || empty($permitNumber)) {
                 return new Response(400, "Tous les champs sont requis.");
             }
+
+            $firstName = strtolower($firstName);
+            $secondName = strtolower($secondName);
+            $address = strtolower($address);
+            $permitNumber = strtolower($permitNumber);
 
             $customer = new Customer(null, $firstName, $secondName, $address, $permitNumber);
             $this->customerRepository->save($customer);
@@ -28,12 +31,14 @@ class CustomerService {
         }
     }
 
-    // Get customer by first and second name
     public function getCustomerByFullName($firstName, $secondName) {
         try {
             if (empty($firstName) || empty($secondName)) {
                 return new Response(400, "Les noms ne peuvent pas être vides.");
             }
+
+            $firstName = strtolower($firstName);
+            $secondName = strtolower($secondName);
 
             $customer = $this->customerRepository->getByFullName($firstName, $secondName);
 
@@ -47,12 +52,16 @@ class CustomerService {
         }
     }
 
-    // Update customer details
     public function updateCustomer($id, $firstName, $secondName, $address, $permitNumber) {
         try {
             if (empty($firstName) || empty($secondName) || empty($address) || empty($permitNumber)) {
                 return new Response(400, "Tous les champs sont requis.");
             }
+
+            $firstName = strtolower($firstName);
+            $secondName = strtolower($secondName);
+            $address = strtolower($address);
+            $permitNumber = strtolower($permitNumber);
 
             $result = $this->customerRepository->update($id, $firstName, $secondName, $address, $permitNumber);
 
@@ -66,7 +75,6 @@ class CustomerService {
         }
     }
 
-    // Delete customer
     public function deleteCustomer($id) {
         try {
             if (empty($id)) {
@@ -85,6 +93,5 @@ class CustomerService {
         }
     }
 }
-
 
 
