@@ -13,20 +13,34 @@ class VehicleRepository {
         $this->collection = $this->mongoClient->easyloc->vehicles;  // Name of the collection
     }
 
-    // Method to get a vehicle by its model
-    public function getByModel($model) {
+    // Method to get a vehicle by its licence_plate
+    public function getByLicencePlate($licencePlate) {
         try {
-            // Search in the collection
-            $vehicle = $this->collection->findOne(['model' => $model]);
+            $vehicle = $this->collection->findOne(['licence_plate' => $licencePlate]);
             
             if ($vehicle) {
-                return new Vehicle((string)$vehicle['_id'], $vehicle['model']);
+                return new Vehicle(
+                    (string)$vehicle['_id'], 
+                    $vehicle['model'],
+                    $vehicle['licence_plate'],
+                    $vehicle['informations'],
+                    $vehicle['km']
+                );
             }
             
             return null;  // If not found
         } catch (\Exception $e) {
-            // Handle other errors
             throw new \Exception("An error occurred while retrieving the vehicle: " . $e->getMessage());
+        }
+    }
+
+    // Method to count vehicles with more than a specified km
+    public function countVehiclesWithMoreThanKm($km) {
+        try {
+            $count = $this->collection->countDocuments(['km' => ['$gt' => $km]]);
+            return $count;
+        } catch (\Exception $e) {
+            throw new \Exception("An error occurred while counting vehicles: " . $e->getMessage());
         }
     }
 
@@ -37,17 +51,24 @@ class VehicleRepository {
                 // Update existing vehicle
                 $this->collection->updateOne(
                     ['id' => $vehicle->getId()],
-                    ['$set' => ['model' => $vehicle->getModel()]]
+                    ['$set' => [
+                        'model' => $vehicle->getModel(),
+                        'licence_plate' => $vehicle->getLicencePlate(),
+                        'informations' => $vehicle->getInformations(),
+                        'km' => $vehicle->getKm()
+                    ]]
                 );
             } else {
                 // Insert new vehicle with an auto-increment ID
-                // You would likely use some form of auto-increment logic (not shown here) or a database feature to generate unique IDs
                 $lastVehicle = $this->collection->find([], ['sort' => ['id' => -1], 'limit' => 1])->toArray();
                 $newId = (count($lastVehicle) > 0) ? $lastVehicle[0]['id'] + 1 : 1; // Get next available ID
 
                 $result = $this->collection->insertOne([
                     'id' => $newId,
-                    'model' => $vehicle->getModel()
+                    'model' => $vehicle->getModel(),
+                    'licence_plate' => $vehicle->getLicencePlate(),
+                    'informations' => $vehicle->getInformations(),
+                    'km' => $vehicle->getKm()
                 ]);
 
                 $vehicle->setId($newId);  // Set the ID for the new vehicle
@@ -57,13 +78,18 @@ class VehicleRepository {
         }
     }
 
-    // Method to update the vehicle's model
-    public function updateModel($id, $newModel) {
+    // Method to update a vehicle's details
+    public function updateVehicle($id, $model, $licencePlate, $informations, $km) {
         try {
-            // Update the vehicle's model by its ID
+            // Update the vehicle's details by its ID
             $result = $this->collection->updateOne(
-                ['id' => (int)$id], // Search by vehicle ID
-                ['$set' => ['model' => $newModel]] // Set the new model
+                ['id' => (int)$id],
+                ['$set' => [
+                    'model' => $model,
+                    'licence_plate' => $licencePlate,
+                    'informations' => $informations,
+                    'km' => $km
+                ]]
             );
 
             // Check if a vehicle was updated
@@ -73,7 +99,7 @@ class VehicleRepository {
 
             return false; // No vehicle updated (could be because the ID doesn't exist)
         } catch (\Exception $e) {
-            throw new \Exception("Error updating vehicle model: " . $e->getMessage());
+            throw new \Exception("Error updating vehicle: " . $e->getMessage());
         }
     }
 
@@ -81,9 +107,8 @@ class VehicleRepository {
     public function delete($id) {
         try {
             // Delete a vehicle by ID
-            $result = $this->collection->deleteOne(['id' => (int)$id]); // Ensure ID is cast to integer
-
-            return $result->getDeletedCount() > 0; // Returns true if a vehicle was deleted
+            $result = $this->collection->deleteOne(['id' => (int)$id]);
+            return $result->getDeletedCount() > 0; 
         } catch (\Exception $e) {
             throw new \Exception("Error deleting vehicle: " . $e->getMessage());
         }
