@@ -111,4 +111,15 @@ class ContractService {
             return new Response(500, "Une erreur est survenue lors de la suppression du contrat: " . $e->getMessage());
         }
     }
+
+    // Method to create the contracts table by calling the repository's createTable method
+    public function createTable() {
+        try {
+            // Call the method from the repository to create the table
+            return $this->contractRepository->createTable();
+        } catch (\Exception $e) {
+            // If there's an error, return a response with status 500
+            return new Response(500, "Erreur lors de la création de la table : " . $e->getMessage());
+        }
+    }
 }
