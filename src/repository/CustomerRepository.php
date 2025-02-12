@@ -3,6 +3,7 @@
 namespace Lucpa\Repository;
 
 use Lucpa\Model\Customer;
+use MongoDB\BSON\ObjectId;
 
 class CustomerRepository {
     private $mongoClient;
@@ -22,7 +23,7 @@ class CustomerRepository {
 
             if ($customer) {
                 return new Customer(
-                    (int)$customer['id'],
+                    (string)$customer['_id'],
                     $customer['first_name'], 
                     $customer['second_name'], 
                     $customer['address'], 
@@ -40,7 +41,7 @@ class CustomerRepository {
         try {
             if ($customer->getId()) {
                 $this->collection->updateOne(
-                    ['id' => $customer->getId()],
+                    ['_id' => new ObjectId($customer->getId())],
                     ['$set' => [
                         'first_name' => $customer->getFirstName(),
                         'second_name' => $customer->getSecondName(),
@@ -49,18 +50,14 @@ class CustomerRepository {
                     ]]
                 );
             } else {
-                $lastCustomer = $this->collection->find([], ['sort' => ['id' => -1], 'limit' => 1])->toArray();
-                $newId = (count($lastCustomer) > 0) ? $lastCustomer[0]['id'] + 1 : 1;
-
                 $result = $this->collection->insertOne([
-                    'id' => $newId,
                     'first_name' => $customer->getFirstName(),
                     'second_name' => $customer->getSecondName(),
                     'address' => $customer->getAddress(),
                     'permit_number' => $customer->getPermitNumber()
                 ]);
 
-                $customer->setId($newId);
+                $customer->setId((string)$result->getInsertedId());
             }
         } catch (\Exception $e) {
             throw new \Exception("Error saving customer: " . $e->getMessage());
@@ -70,7 +67,7 @@ class CustomerRepository {
     public function update($id, $firstName, $secondName, $address, $permitNumber) {
         try {
             $result = $this->collection->updateOne(
-                ['id' => (int)$id],
+                ['_id' => new ObjectId($id)],
                 ['$set' => [
                     'first_name' => $firstName,
                     'second_name' => $secondName,
@@ -87,7 +84,7 @@ class CustomerRepository {
 
     public function delete($id) {
         try {
-            $result = $this->collection->deleteOne(['id' => (int)$id]);
+            $result = $this->collection->deleteOne(['_id' => new ObjectId($id)]);
 
             return $result->getDeletedCount() > 0;
         } catch (\Exception $e) {

@@ -3,6 +3,7 @@
 namespace Lucpa\Repository;
 
 use Lucpa\Model\Vehicle;
+use MongoDB\BSON\ObjectId;
 
 class VehicleRepository {
     private $mongoClient;
@@ -46,7 +47,7 @@ class VehicleRepository {
         try {
             if ($vehicle->getId()) {
                 $this->collection->updateOne(
-                    ['id' => $vehicle->getId()],
+                    ['_id' => new ObjectId($vehicle->getId())],
                     ['$set' => [
                         'model' => $vehicle->getModel(),
                         'licence_plate' => $vehicle->getLicencePlate(),
@@ -55,18 +56,14 @@ class VehicleRepository {
                     ]]
                 );
             } else {
-                $lastVehicle = $this->collection->find([], ['sort' => ['id' => -1], 'limit' => 1])->toArray();
-                $newId = (count($lastVehicle) > 0) ? $lastVehicle[0]['id'] + 1 : 1;
-
                 $result = $this->collection->insertOne([
-                    'id' => $newId,
                     'model' => $vehicle->getModel(),
                     'licence_plate' => $vehicle->getLicencePlate(),
                     'informations' => $vehicle->getInformations(),
                     'km' => $vehicle->getKm()
                 ]);
-
-                $vehicle->setId($newId);
+                
+                $vehicle->setId((string)$result->getInsertedId());
             }
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de l'enregistrement du véhicule : " . $e->getMessage());
@@ -76,7 +73,7 @@ class VehicleRepository {
     public function updateVehicle($id, $model, $licencePlate, $informations, $km) {
         try {
             $result = $this->collection->updateOne(
-                ['id' => (int)$id],
+                ['_id' => new ObjectId($id)],
                 ['$set' => [
                     'model' => $model,
                     'licence_plate' => $licencePlate,
@@ -85,11 +82,7 @@ class VehicleRepository {
                 ]]
             );
 
-            if ($result->getModifiedCount() > 0) {
-                return true;
-            }
-
-            return false;
+            return $result->getModifiedCount() > 0;
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la mise à jour du véhicule : " . $e->getMessage());
         }
@@ -97,7 +90,7 @@ class VehicleRepository {
 
     public function delete($id) {
         try {
-            $result = $this->collection->deleteOne(['id' => (int)$id]);
+            $result = $this->collection->deleteOne(['_id' => new ObjectId($id)]);
             return $result->getDeletedCount() > 0;
         } catch (\Exception $e) {
             throw new \Exception("Erreur lors de la suppression du véhicule : " . $e->getMessage());
