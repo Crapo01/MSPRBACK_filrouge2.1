@@ -20,7 +20,7 @@ class BillingServiceTest extends TestCase {
     public function testSaveBillingSuccess() {
         $contractId = 1;
         $amount = 100;
-        $billing = new Billing(null, $contractId, $amount);
+        $billing = new Billing($contractId, $amount,null);
 
         $this->billingRepository
             ->expects($this->once())
