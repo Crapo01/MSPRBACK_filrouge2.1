@@ -1,19 +1,19 @@
 <?php
+
 namespace Lucpa\Repository;
 
 use Lucpa\Model\Vehicle;
+use MongoDB\BSON\ObjectId;
 
 class VehicleRepository {
     private $mongoClient;
     private $collection;
 
-    // Constructor that initializes the MongoDB connection and selects the collection
     public function __construct($mongoClient) {
         $this->mongoClient = $mongoClient;
-        $this->collection = $this->mongoClient->easyloc->vehicles;  // Name of the collection
+        $this->collection = $this->mongoClient->easyloc->vehicles;
     }
 
-    // Method to get a vehicle by its licence_plate
     public function getByLicencePlate($licencePlate) {
         try {
             $vehicle = $this->collection->findOne(['licence_plate' => $licencePlate]);
@@ -28,29 +28,26 @@ class VehicleRepository {
                 );
             }
             
-            return null;  // If not found
+            return null;
         } catch (\Exception $e) {
-            throw new \Exception("An error occurred while retrieving the vehicle: " . $e->getMessage());
+            throw new \Exception("Une erreur s'est produite lors de la récupération du véhicule : " . $e->getMessage());
         }
     }
 
-    // Method to count vehicles with more than a specified km
     public function countVehiclesWithMoreThanKm($km) {
         try {
             $count = $this->collection->countDocuments(['km' => ['$gt' => $km]]);
             return $count;
         } catch (\Exception $e) {
-            throw new \Exception("An error occurred while counting vehicles: " . $e->getMessage());
+            throw new \Exception("Une erreur s'est produite lors du comptage des véhicules : " . $e->getMessage());
         }
     }
 
-    // Method to save a vehicle
     public function save(Vehicle $vehicle) {
         try {
             if ($vehicle->getId()) {
-                // Update existing vehicle
                 $this->collection->updateOne(
-                    ['id' => $vehicle->getId()],
+                    ['_id' => new ObjectId($vehicle->getId())],
                     ['$set' => [
                         'model' => $vehicle->getModel(),
                         'licence_plate' => $vehicle->getLicencePlate(),
@@ -59,31 +56,24 @@ class VehicleRepository {
                     ]]
                 );
             } else {
-                // Insert new vehicle with an auto-increment ID
-                $lastVehicle = $this->collection->find([], ['sort' => ['id' => -1], 'limit' => 1])->toArray();
-                $newId = (count($lastVehicle) > 0) ? $lastVehicle[0]['id'] + 1 : 1; // Get next available ID
-
                 $result = $this->collection->insertOne([
-                    'id' => $newId,
                     'model' => $vehicle->getModel(),
                     'licence_plate' => $vehicle->getLicencePlate(),
                     'informations' => $vehicle->getInformations(),
                     'km' => $vehicle->getKm()
                 ]);
-
-                $vehicle->setId($newId);  // Set the ID for the new vehicle
+                
+                $vehicle->setId((string)$result->getInsertedId());
             }
         } catch (\Exception $e) {
-            throw new \Exception("Error saving vehicle: " . $e->getMessage());
+            throw new \Exception("Erreur lors de l'enregistrement du véhicule : " . $e->getMessage());
         }
     }
 
-    // Method to update a vehicle's details
     public function updateVehicle($id, $model, $licencePlate, $informations, $km) {
         try {
-            // Update the vehicle's details by its ID
             $result = $this->collection->updateOne(
-                ['id' => (int)$id],
+                ['_id' => new ObjectId($id)],
                 ['$set' => [
                     'model' => $model,
                     'licence_plate' => $licencePlate,
@@ -92,25 +82,18 @@ class VehicleRepository {
                 ]]
             );
 
-            // Check if a vehicle was updated
-            if ($result->getModifiedCount() > 0) {
-                return true; // Successfully updated
-            }
-
-            return false; // No vehicle updated (could be because the ID doesn't exist)
+            return $result->getModifiedCount() > 0;
         } catch (\Exception $e) {
-            throw new \Exception("Error updating vehicle: " . $e->getMessage());
+            throw new \Exception("Erreur lors de la mise à jour du véhicule : " . $e->getMessage());
         }
     }
 
-    // Method to delete a vehicle by ID
     public function delete($id) {
         try {
-            // Delete a vehicle by ID
-            $result = $this->collection->deleteOne(['id' => (int)$id]);
-            return $result->getDeletedCount() > 0; 
+            $result = $this->collection->deleteOne(['_id' => new ObjectId($id)]);
+            return $result->getDeletedCount() > 0;
         } catch (\Exception $e) {
-            throw new \Exception("Error deleting vehicle: " . $e->getMessage());
+            throw new \Exception("Erreur lors de la suppression du véhicule : " . $e->getMessage());
         }
     }
 }

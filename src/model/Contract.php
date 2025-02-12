@@ -2,16 +2,16 @@
 namespace Lucpa\Model;
 
 class Contract {
-    private $id;                    // Contract ID (Auto-Incremented)
-    private $vehicleUid;            // UID of the associated vehicle
-    private $customerUid;           // UID of the associated customer
-    private $signDatetime;          // Date + time of contract signing
-    private $locBeginDatetime;      // Date + time of rental start
-    private $locEndDatetime;        // Date + time of rental end
-    private $returningDatetime;     // Date + time of vehicle return
-    private $price;                 // Price billed for the contract
+    private $id;                    
+    private $vehicleUid;            
+    private $customerUid;           
+    private $signDatetime;          
+    private $locBeginDatetime;      
+    private $locEndDatetime;        
+    private $returningDatetime;     
+    private $price;                 
 
-    // Constructor to initialize the contract
+    
     public function __construct($id = null, $vehicleUid, $customerUid, $signDatetime, $locBeginDatetime, $locEndDatetime, $returningDatetime, $price) {
         $this->id = $id;
         $this->vehicleUid = $vehicleUid;
@@ -23,7 +23,7 @@ class Contract {
         $this->price = $price;
     }
 
-    // Getters and setters for each field
+    
     public function getId() { return $this->id; }
     public function setId($id) { $this->id = $id; }
 
