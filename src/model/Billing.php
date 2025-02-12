@@ -9,9 +9,9 @@ class Billing
     private $amount;
     public function __construct($id = null, $contract_id, $amount)
     {
-        $this->id = $id;
         $this->contract_id = $contract_id;
         $this->amount = $amount;
+        $this->id = $id;
     }
 
     function getId()

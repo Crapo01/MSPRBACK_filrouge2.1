@@ -51,7 +51,7 @@ class Database
 
 
             //$uri = "mongodb://$username:$password@$host:$port/$db";
-            $uri = "mongodb://localhost:27017/easyloc";
+            $uri = "mongodb://$host/$db";
 
             try {
 

@@ -10,7 +10,7 @@ class AnalyseService {
     public function __construct(AnalyseRepository $analyseRepository) {
         $this->analyseRepository = $analyseRepository;
     }
-
+  
     public function listOngoingRentalsByCustomerUid($customerUid) {
         try {
             if (empty($customerUid) || !is_string($customerUid) || strlen($customerUid) > 255) {
