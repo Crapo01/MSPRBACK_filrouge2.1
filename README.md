@@ -702,9 +702,9 @@ use Lucpa\Service\CustomerService;
 use Lucpa\Model\Database as ModelDatabase;
 use Lucpa\Service\VehicleService;
 
-$db = new ModelDatabase();
-$pdo = $db->getMySQLConnection();
-$mongoClient = $db->getMongoConnection();
+$mongoClient = ModelDatabase::connectMongoDB();
+$pdo = ModelDatabase::connectMySQL();
+$pdo2 = ModelDatabase::connectPostgreSQL();
 
 // Initialisation repository and service
 $customerRepository = new CustomerRepository($mongoClient);

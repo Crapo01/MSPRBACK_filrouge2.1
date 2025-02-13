@@ -1,4 +1,3 @@
-
 <?php
 
 require_once 'vendor/autoload.php';
@@ -15,28 +14,28 @@ use Lucpa\Service\CustomerService;
 use Lucpa\Model\Database as ModelDatabase;
 use Lucpa\Service\VehicleService;
 
-$db = new ModelDatabase();
-$pdo = $db->getMySQLConnection();
-$mongoClient = $db->getMongoConnection();
 
+$pdo2 = ModelDatabase::connectPostgreSQL();
+$mongoClient = ModelDatabase::connectMongoDB();
+$pdo = ModelDatabase::connectMySQL();
 // Initialisation du repository et du service
- $customerRepository = new CustomerRepository($mongoClient);
- $customerService = new CustomerService($customerRepository);
+// $customerRepository = new CustomerRepository($mongoClient);
+// $customerService = new CustomerService($customerRepository);
 
-// $billingRepository = new BillingRepository($pdo);
-// $billingService = new BillingService($billingRepository);
+ $billingRepository = new BillingRepository($pdo);
+ $billingService = new BillingService($billingRepository);
 
-// $contractRepository = new ContractRepository($pdo);
-// $contractService = new ContractService($contractRepository);
+ $contractRepository = new ContractRepository($pdo);
+ $contractService = new ContractService($contractRepository);
 
 // $vehicleRepository = new VehicleRepository($mongoClient);
 // $vehicleService = new VehicleService($vehicleRepository);
 
- //$analyseRepository = new AnalyseRepository($pdo);
+ //$analyseRepository = new AnalyseRepository($pdo2);
  //$analyseService = new AnalyseService($analyseRepository);
 
 // Example usage of saveCustomer
-$response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P12345678');
+//$response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P12345678');
 
 
 // Example usage of getCustomerByFullName
@@ -44,11 +43,8 @@ $response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P1
 
 
 // Example usage of updateCustomer
-//$response = $customerService->updateCustomer("67aa20e262353ee0510d5eba", 'John', 'Smith', '5678 Oak Avenue', 'P87654321');
+//$response = $customerService->updateCustomer(1, 'John', 'Smith', '5678 Oak Avenue', 'P87654321');
 
-
-// Example usage of deleteCustomer
-// $response = $customerService->deleteCustomer("67ab986462353ee0510d5ec1");
 
 // Example usage of saveVehicle
 //$response = $vehicleService->saveVehicle('Toyota Corolla', 'ABC1234', 'Sedan, 5 doors', 15000);
@@ -71,15 +67,15 @@ $response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P1
 
 
 // Example usage of saveContract
-//$response = $contractService->saveContract(
-//     'V001',           // vehicleUid
-//     'C003',           // customerUid
-//     '2025-02-11 10:00:00', // signDatetime
-//     '2025-02-11 14:00:00', // locBeginDatetime
-//     '2025-02-12 14:00:00', // locEndDatetime
-//     '2025-02-12 15:00:00', // returningDatetime
-//     100.00            // price
-// );
+$response = $contractService->saveContract(
+     'V001',           // vehicleUid
+     'C003',           // customerUid
+     '2025-02-11 10:00:00', // signDatetime
+     '2025-02-11 14:00:00', // locBeginDatetime
+     '2025-02-12 14:00:00', // locEndDatetime
+     '2025-02-12 15:00:00', // returningDatetime
+     100.00            // price
+ );
 
 
 // Example usage of getContractById
@@ -91,7 +87,7 @@ $response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P1
 
 
 // Example usage of createTable (if you need to create the contracts table)
-//$response = $contractService->createTable();
+$response = $contractService->createTable();
 
 
 // Example usage of saveBilling
@@ -154,4 +150,7 @@ $response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P1
 
 // display Json response
 echo ($response->toJson());
+
+
+
 
