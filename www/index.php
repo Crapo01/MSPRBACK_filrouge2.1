@@ -87,7 +87,7 @@ $response = $contractService->saveContract(
 
 
 // Example usage of createTable (if you need to create the contracts table)
-//$response = $contractService->createTable();
+$response = $contractService->createTable();
 
 
 // Example usage of saveBilling
