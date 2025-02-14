@@ -8,8 +8,6 @@ services:
       - "8080:80"
     volumes:
       - ./www:/var/www/html
-    env_file:
-      - ./www/.env
     depends_on:
       - mysql
       - mongodb
@@ -19,10 +17,10 @@ services:
     container_name: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: easyloc
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
     volumes:
@@ -45,7 +43,7 @@ services:
       - mysql
     environment:
       PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: root
     ports:
       - "8081:80"
 

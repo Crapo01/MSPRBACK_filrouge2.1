@@ -7,7 +7,7 @@ class Billing
     private $id;
     private $contract_id;
     private $amount;
-    public function __construct($id = null, $contract_id, $amount)
+    public function __construct($id, $contract_id, $amount)
     {
         $this->contract_id = $contract_id;
         $this->amount = $amount;

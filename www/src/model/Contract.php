@@ -12,7 +12,7 @@ class Contract {
     private $price;                 
 
     
-    public function __construct($id = null, $vehicleUid, $customerUid, $signDatetime, $locBeginDatetime, $locEndDatetime, $returningDatetime, $price) {
+    public function __construct($id, $vehicleUid, $customerUid, $signDatetime, $locBeginDatetime, $locEndDatetime, $returningDatetime, $price) {
         $this->id = $id;
         $this->vehicleUid = $vehicleUid;
         $this->customerUid = $customerUid;

@@ -5,7 +5,7 @@ namespace Lucpa\Model;
 class Database
 {
     private static $mysqlPdo;
-    private static $postgresPdo;
+    //private static $postgresPdo;
     private static $mongoClient;
 
     public static function connectMySQL()
@@ -30,27 +30,27 @@ class Database
         }
     }
 
-    public static function connectPostgreSQL()
-    {
-        if (isset($_ENV['PG_HOST'], $_ENV['PG_NAME'], $_ENV['PG_USER'], $_ENV['PG_PASS'])) {
-            $host = $_ENV['PG_HOST'];
-            $dbname = $_ENV['PG_NAME'];
-            $username = $_ENV['PG_USER'];
-            $password = $_ENV['PG_PASS'];
+    // public static function connectPostgreSQL()
+    // {
+    //     if (isset($_ENV['PG_HOST'], $_ENV['PG_NAME'], $_ENV['PG_USER'], $_ENV['PG_PASS'])) {
+    //         $host = $_ENV['PG_HOST'];
+    //         $dbname = $_ENV['PG_NAME'];
+    //         $username = $_ENV['PG_USER'];
+    //         $password = $_ENV['PG_PASS'];
             
-            $dsn = "pgsql:host=$host;dbname=$dbname";
+    //         $dsn = "pgsql:host=$host;dbname=$dbname";
 
-            try {
-                self::$postgresPdo = new \PDO($dsn, $username, $password);
-                self::$postgresPdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-                return self::$postgresPdo;
-            } catch (\PDOException $e) {
-                echo "Erreur de connexion PostgreSQL : " . $e->getMessage() . "<br>";
-            }
-        } else {
-            echo "Les variables d'environnement PostgreSQL ne sont pas définies.<br>";
-        }
-    }
+    //         try {
+    //             self::$postgresPdo = new \PDO($dsn, $username, $password);
+    //             self::$postgresPdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    //             return self::$postgresPdo;
+    //         } catch (\PDOException $e) {
+    //             echo "Erreur de connexion PostgreSQL : " . $e->getMessage() . "<br>";
+    //         }
+    //     } else {
+    //         echo "Les variables d'environnement PostgreSQL ne sont pas définies.<br>";
+    //     }
+    // }
 
     public static function connectMongoDB()
     {
@@ -79,10 +79,10 @@ class Database
         self::$mysqlPdo = null;
     }
 
-    public static function closePostgreSQLConnection()
-    {
-        self::$postgresPdo = null;
-    }
+    // public static function closePostgreSQLConnection()
+    // {
+    //     self::$postgresPdo = null;
+    // }
 
     public static function closeMongoConnection()
     {
