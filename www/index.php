@@ -15,7 +15,7 @@ use Lucpa\Model\Database as ModelDatabase;
 use Lucpa\Service\VehicleService;
 
 
-$pdo2 = ModelDatabase::connectPostgreSQL();
+//$pdo2 = ModelDatabase::connectPostgreSQL();
 $mongoClient = ModelDatabase::connectMongoDB();
 $pdo = ModelDatabase::connectMySQL();
 // Initialisation du repository et du service
@@ -31,8 +31,8 @@ $pdo = ModelDatabase::connectMySQL();
 // $vehicleRepository = new VehicleRepository($mongoClient);
 // $vehicleService = new VehicleService($vehicleRepository);
 
- //$analyseRepository = new AnalyseRepository($pdo2);
- //$analyseService = new AnalyseService($analyseRepository);
+ $analyseRepository = new AnalyseRepository($pdo);
+ $analyseService = new AnalyseService($analyseRepository);
 
 // Example usage of saveCustomer
 //$response = $customerService->saveCustomer('John', 'Doe', '1234 Elm Street', 'P12345678');
@@ -67,15 +67,15 @@ $pdo = ModelDatabase::connectMySQL();
 
 
 // Example usage of saveContract
-$response = $contractService->saveContract(
-     'V001',           // vehicleUid
-     'C003',           // customerUid
-     '2025-02-11 10:00:00', // signDatetime
-     '2025-02-11 14:00:00', // locBeginDatetime
-     '2025-02-12 14:00:00', // locEndDatetime
-     '2025-02-12 15:00:00', // returningDatetime
-     100.00            // price
- );
+// $response = $contractService->saveContract(
+//      'V001',           // vehicleUid
+//      'C003',           // customerUid
+//      '2025-02-11 10:00:00', // signDatetime
+//      '2025-02-11 14:00:00', // locBeginDatetime
+//      '2025-02-12 14:00:00', // locEndDatetime
+//      '2025-02-12 15:00:00', // returningDatetime
+//      100.00            // price
+//  );
 
 
 // Example usage of getContractById
@@ -87,11 +87,11 @@ $response = $contractService->saveContract(
 
 
 // Example usage of createTable (if you need to create the contracts table)
-$response = $contractService->createTable();
+//$response = $contractService->createTable();
 
 
 // Example usage of saveBilling
-//$response = $billingService->saveBilling(
+// $response = $billingService->saveBilling(
 //     1,       // contract_id (use an actual contract ID)
 //     200.50   // amount (use an actual amount greater than 0)
 // );
@@ -125,7 +125,7 @@ $response = $contractService->createTable();
 //$response = $analyseService->isRentalFullyPaid($contractId);
 
 // Example usage: List unpaid rentals
-//$response = $analyseService->listUnpaidRentals();
+$response = $analyseService->listUnpaidRentals();
 
 // Example usage: Count late rentals between dates
 //$startDate = '2025-01-01';

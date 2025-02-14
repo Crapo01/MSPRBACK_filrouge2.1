@@ -1,6 +1,6 @@
 FROM php:8.1-apache
 
-# Install required extensions
+# Install necessary extensions and dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -20,11 +20,8 @@ RUN pecl install mongodb \
 # Set working directory
 WORKDIR /var/www/html
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Install project dependencies
-RUN composer install --no-dev --optimize-autoloader || true
+# Copy application files
+COPY . /var/www/html
 
 # Expose Apache Port
 EXPOSE 80
